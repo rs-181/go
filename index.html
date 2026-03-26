@@ -7,38 +7,43 @@
     <style>
         body, html { margin: 0; padding: 0; height: 100vh; width: 100vw; overflow: hidden; }
         iframe { border: none; width: 100%; height: 100%; }
+        .message { text-align: center; margin-top: 20%; font-family: sans-serif; padding: 20px; }
     </style>
 </head>
 <body>
-    <iframe id="display" src=""></iframe>
-
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <iframe id="display" src="" style="display:none;"></iframe>
+    <div id="status" class="message">Loading RS System...</div>
 
     <script>
-        // Yahan apni Firebase Config daalna (Step 2 mein milegi)
-        var firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            databaseURL: "YOUR_DATABASE_URL",
-            projectId: "YOUR_PROJECT_ID",
-        };
-        firebase.initializeApp(firebaseConfig);
+        async function startSystem() {
+            const statusDiv = document.getElementById('status');
+            const iframe = document.getElementById('display');
 
-        // URL se domain nikalna (e.g. /rs.store -> rs_store)
-        let path = window.location.pathname.split("/").pop().replace(".", "_");
+            try {
+                // 1. Database file ko fetch karna
+                const response = await fetch('database.json');
+                const mySites = await response.json();
 
-        if(!path) {
-            document.body.innerHTML = "<h1>Welcome to Our Site</h1>";
-        } else {
-            firebase.database().ref('sites/' + path).once('value').then((snapshot) => {
-                const targetUrl = snapshot.val();
-                if (targetUrl) {
-                    document.getElementById('display').src = targetUrl;
+                // 2. URL se path nikalna (e.g. /rs.store -> rs_store)
+                let path = window.location.pathname.split("/").pop().replace(".", "_");
+
+                if (!path || path === "") {
+                    statusDiv.innerHTML = "<h1>Welcome to Our Site</h1>";
+                } else if (mySites[path]) {
+                    // 3. Agar link mil gaya toh iframe mein load karo
+                    statusDiv.style.display = 'none';
+                    iframe.style.display = 'block';
+                    iframe.src = mySites[path];
                 } else {
-                    document.body.innerHTML = "<h1>Error 404 : Link not found! Please Check Your Link. Thanks for Visiting our Site 😊</h1>";
+                    statusDiv.innerHTML = "<h1>Error 404 : Link not found! Please Check Your Link. Thanks for Visiting our Site 😊</h1>";
                 }
-            });
+            } catch (error) {
+                statusDiv.innerHTML = "<h1>System Error: Database file not found!</h1>";
+                console.error(error);
+            }
         }
+
+        startSystem();
     </script>
 </body>
 </html>
