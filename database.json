@@ -1,7 +1,8 @@
 {
-  "rs_store": "https://rs-appstore.blogspot.com",
-  "ecosystem_rehan": "https://rehansandhi.netlify.app",
+  "store": "https://rs-appstore.blogspot.com",
+  "ecosystem": "https://rehansandhi.netlify.app",
   "portfolio": "https://rehansandhi181.blogspot.com",
-  "home": "https://rs-browser.netlify.app",
+  "home": "https://rs-181.github.io/rs-browser",
+  "chat": "https://rs-181.github.io/gl",
   "amrutam": "https://amrutam-water.netlify.app"
 }
